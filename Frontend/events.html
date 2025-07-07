@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Events - College Club</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    .hover-scale {
+      transition: transform 0.3s, box-shadow 0.4s;
+      border-radius: 16px;
+      background: white;
+      box-shadow: 0 4px 12px rgba(12, 10, 10, 0.1);
+    }
+    .hover-scale:hover {
+      transform: scale(1.04);
+      box-shadow: 0 6px 18px rgba(25, 24, 24, 0.5);
+    }
+    h1{
+      color: red;
+    } 
+  </style>
+  
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="index.html">College Club</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+          <li class="nav-item"><a class="nav-link active" href="events.html">Events</a></li>
+          <li class="nav-item"><a class="nav-link" href="clublist.html">Clubs</a></li>
+          <li class="nav-item"><a class="nav-link" href="members.html">Members</a></li>
+          <li class="nav-item"><a class="nav-link" href="gallery.html">Gallery</a></li>
+          <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+<div class="container py-3 mb-5">
+  <h1>Our Upcoming Events</h1>
+  <p>We organize a range of events that bring students together to learn, network, and grow.</p>
+  <div class="row" id="events-container">
+    <!-- Cards will be injected here -->
+  </div>
+</div>
+
+
+<!-- Footer -->
+  <footer class="bg-dark text-white text-center py-4">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-lg-4">
+          <h3> Quick Links </h3>
+          <p><a class="link-primary" href="events.html">Events</a></p>
+          <p><a class="link-primary" href="about.html">About Us</a></p>
+          <p><a class="link-primary" href="clublist.html">Clubs</a></p>
+          <p><a class="link-primary" href="members.html">Team Members</a></p>
+          <p><a class="link-primary" href="gallery.html"> Gallery</a></p>
+        </div>
+        <div class="col-lg-4">
+          <h3> Contact </h3>
+          <p class="mb-2"> <a class="link-light" href="contact.html" target="_blank"> Help ? </a></p>
+          <p class="mb-2"> <a class="link-light" href="joiningclub.html" target="_blank"> To join a club.. </a></p>
+          <p> <a class="link-light" href="register.html" target="_blank"> Register here.. </a></p>
+        </div>
+        <div class="col-lg-4">
+          <h3 class="mb-2"> Reach Us </h3>
+          <span> Mail: admin1@collegeclub.com </span> <br/>
+          <span> Ph No: +91 9876543210 </span><br/>
+          <span><a href="admin.html" class="link-light" target="_blank">Admin</a></span>
+        </div>
+      </div>
+    </div>
+    <hr />
+    <p>&copy; 2025 College Club. All rights reserved.</p>
+  </footer>
+
+<!-- Back to Top Button -->
+<button id="backToTopBtn" class="btn btn-secondary position-fixed" 
+  style="bottom: 40px; right: 30px; display: none; z-index: 999;">
+    <i class="bi bi-arrow-up"></i>
+</button>
+
+  <script>
+    // Show/hide back to top button
+  const backToTopBtn = document.getElementById("backToTopBtn");
+
+  window.addEventListener("scroll", () => {
+    if (window.scrollY > 300) {
+      backToTopBtn.style.display = "block";
+    } else {
+      backToTopBtn.style.display = "none";
+    }
+  });
+
+  backToTopBtn.addEventListener("click", () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+  });
+
+  </script>
+
+  <script>
+  async function loadEvents() {
+    try {
+      const res = await fetch('http://localhost:4000/api/events');
+      const events = await res.json();
+      const container = document.getElementById('events-container');
+      container.innerHTML = ''; // clear existing
+
+      events.forEach(event => {
+        const card = `
+          
+          <div class="col-md-4">
+            <div class="card mb-3 hover-scale">
+            <img src="${event.image}" class="card-img-top" alt="${event.title}" height="230">
+            <div class="card-body">
+              <h5 class="card-title">${event.title}</h5>
+              <p class="text-muted">${event.description}</p>
+              <div class="d-flex justify-content-between align-items-center px-2 py-1">
+                <p class="card-text text-muted mb-0">
+                  Date: ${event.date}
+                </p>
+                <a href="${event.link}" class="btn btn-primary btn-sm rounded-pill" target="_blank"> Know More </a>
+              </div>
+            </div>
+          </div>
+      </div>`;
+        container.innerHTML += card;
+      });
+    } catch (err) {
+      console.error('Error loading events:', err);
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', loadEvents);
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

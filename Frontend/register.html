@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Event Registration</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="index.html">College Club</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+          <li class="nav-item"><a class="nav-link" href="events.html">Events</a></li>
+          <li class="nav-item"><a class="nav-link" href="clublist.html">Clubs</a></li>
+          <li class="nav-item"><a class="nav-link" href="members.html">Members</a></li>
+          <li class="nav-item"><a class="nav-link" href="gallery.html">Gallery</a></li>
+          <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Registration Form -->
+  <section class="py-4 bg-light">
+    <div class="container">
+      <h2 class="text-primary mb-4 text-center">Register for the Event</h2>
+      <form class="bg-white p-4 rounded shadow" id="registerForm" method="POST">
+        <div class="mb-3 row">
+          <div class="col-lg-6">
+            <label for="name" class="form-label">Full Name *</label>
+            <input type="text" id="name" name="name" class="form-control" required>
+          </div>
+          <div class="col-lg-6">
+            <label for="collegeId" class="form-label">College ID Card No. *</label>
+            <input type="text" id="collegeId" name="collegeId" class="form-control" required>
+          </div>
+        </div>
+
+        <div class="mb-3 row">
+          <div class="col-lg-6">
+            <label for="email" class="form-label">Email Address *</label>
+            <input type="email" id="email" name="email" class="form-control" required>
+          </div>
+          <div class="col-lg-6">
+            <label for="phone" class="form-label">Phone Number *</label>
+            <input type="tel" id="phone" name="phone" class="form-control" required>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="event" class="form-label">Select Event *</label>
+          <select id="event" name="event" class="form-select" required>
+            <option value="">-- Loading events... --</option>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label for="message" class="form-label">Message</label>
+          <textarea id="message" name="message" class="form-control" rows="2" placeholder="Any message or details..."></textarea>
+        </div>
+
+        <div class="text-center">
+          <button type="submit" class="btn btn-success rounded-pill">Submit Registration</button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-dark text-white text-center py-3">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-lg-4">
+          <h3> Quick Links </h3>
+          <p><a class="link-primary" href="events.html">Events</a></p>
+          <p><a class="link-primary" href="about.html">About Us</a></p>
+          <p><a class="link-primary" href="clublist.html">Clubs</a></p>
+          <p><a class="link-primary" href="members.html">Team Members</a></p>
+          <p><a class="link-primary" href="gallery.html"> Gallery</a></p>
+        </div>
+        <div class="col-lg-4">
+          <h3> Contact </h3>
+          <p> <a class="link-light" href="contact.html" target="_blank"> Help ? </a></p>
+          <p> <a class="link-light" href="joiningclub.html" target="_blank"> To join a club.. </a></p>
+          <p> <a class="link-light" href="register.html" target="_blank"> Register here.. </a></p>
+        </div>
+        <div class="col-lg-4">
+          <h3 class="mb-2"> Reach Us </h3>
+          <span> Mail: admin1@collegeclub.com </span> <br/>
+          <span> Ph No: 91 9876543210 </span><br/>
+          <span><a href="admin.html" class="link-light" target="_blank">Admin</a></span>
+        </div>
+      </div>
+    </div>
+    <hr />
+    <p>&copy; 2025 College Club. All rights reserved.</p>
+  </footer>
+
+  <!-- Load Events from Backend -->
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      const eventSelect = document.getElementById("event");
+      try {
+        const res = await fetch("http://localhost:4000/api/events");
+        const events = await res.json();
+        eventSelect.innerHTML = '<option value="">-- Choose an Event --</option>';
+
+        events.forEach(e => {
+          const option = document.createElement("option");
+          option.value = e.title;
+          option.textContent = `${e.title} (${e.date})`;
+          eventSelect.appendChild(option);
+        });
+      } catch (error) {
+        console.error("Error fetching events:", error);
+        eventSelect.innerHTML = '<option value="">Failed to load events</option>';
+      }
+    });
+  </script>
+  <script>
+  document.querySelector("form").addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    const name = document.getElementById("name").value;
+    const collegeId = document.getElementById("collegeId").value;
+    const email = document.getElementById("email").value;
+    const phone = document.getElementById("phone").value;
+    const event = document.getElementById("event").value;
+    const message = document.getElementById("message").value;
+
+    const res = await fetch("http://localhost:4000/registration", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, collegeId, email, phone, event, message })
+    });
+
+    if (res.ok) {
+      alert("Registered successfully!");
+      document.querySelector("form").reset();
+    } else {
+      alert("Failed to register. Please try again.");
+    }
+  });
+</script>
+
+
+</body>
+</html>
+
